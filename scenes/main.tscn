@@ -1,0 +1,207 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/memory_trail.gd" id="3_trail"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambient.wav" id="4_amb"]
+[ext_resource type="AudioStream" path="res://assets/audio/pulse.wav" id="5_pulse"]
+[ext_resource type="AudioStream" path="res://assets/audio/discover.wav" id="6_disc"]
+[ext_resource type="AudioStream" path="res://assets/audio/connect.wav" id="7_conn"]
+[ext_resource type="AudioStream" path="res://assets/audio/gameover.wav" id="8_go"]
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.4, 1, 1, 1, 1)
+
+[sub_resource type="Curve" id="Curve_trail"]
+_data = [Vector2(0, 0.25), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Trail" type="Line2D" parent="."]
+width = 7.0
+width_curve = SubResource("Curve_trail")
+default_color = Color(1, 1, 1, 1)
+gradient = SubResource("Gradient_trail")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("3_trail")
+
+[node name="WorldObjects" type="Node2D" parent="."]
+
+[node name="Effects" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="Ambient" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("4_amb")
+volume_db = -10.0
+
+[node name="SfxPulse" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("5_pulse")
+volume_db = -7.0
+
+[node name="SfxDiscover" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("6_disc")
+volume_db = -6.0
+
+[node name="SfxConnect" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("7_conn")
+volume_db = -6.0
+
+[node name="SfxGameOver" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("8_go")
+volume_db = -4.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DiscoveryLabel" type="Label" parent="UI"]
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 320.0
+offset_bottom = 46.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "DISCOVERED 0"
+
+[node name="StabilityLabel" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -66.0
+offset_right = 150.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_font_sizes/font_size = 11
+text = "WORLD STABILITY"
+horizontal_alignment = 1
+
+[node name="StabilityTrack" type="ColorRect" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -44.0
+offset_right = 150.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(1, 1, 1, 0.14)
+
+[node name="StabilityFill" type="ColorRect" parent="UI/StabilityTrack"]
+offset_right = 300.0
+offset_bottom = 8.0
+color = Color(1, 1, 1, 1)
+
+[node name="PulseLabel" type="Label" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -66.0
+offset_right = 180.0
+offset_bottom = -48.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_font_sizes/font_size = 11
+text = "PULSE"
+
+[node name="PulseTrack" type="ColorRect" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -44.0
+offset_right = 164.0
+offset_bottom = -36.0
+grow_vertical = 0
+color = Color(1, 1, 1, 0.14)
+
+[node name="PulseFill" type="ColorRect" parent="UI/PulseTrack"]
+offset_right = 140.0
+offset_bottom = 8.0
+color = Color(1, 1, 1, 1)
+
+[node name="HintLabel" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -96.0
+offset_right = 420.0
+offset_bottom = -72.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.85)
+theme_override_font_sizes/font_size = 14
+text = "WASD / ARROWS — MOVE      SPACE — PULSE      R — RESTART"
+horizontal_alignment = 1
+
+[node name="GameOver" type="Control" parent="UI"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="UI/GameOver"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Flash" type="ColorRect" parent="UI/GameOver"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="Center" type="CenterContainer" parent="UI/GameOver"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/GameOver/Center"]
+theme_override_constants/separation = 14
+
+[node name="GoTitle" type="Label" parent="UI/GameOver/Center/VBox"]
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 72
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="GoSub" type="Label" parent="UI/GameOver/Center/VBox"]
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 16
+text = "THE WORLD HAS FADED"
+horizontal_alignment = 1
+
+[node name="GoScore" type="Label" parent="UI/GameOver/Center/VBox"]
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "DISCOVERED 0"
+horizontal_alignment = 1
+
+[node name="GoHint" type="Label" parent="UI/GameOver/Center/VBox"]
+theme_override_colors/font_color = Color(1, 1, 1, 0.8)
+theme_override_font_sizes/font_size = 14
+text = "PRESS R OR ENTER TO RESTART"
+horizontal_alignment = 1
